@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'jakarta.persistence:jakarta.persistence-api'
+
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    testImplementation project(path: ':app-category')
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+
+    implementation project(':common')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core:4.6.1'
+    testImplementation 'com.querydsl:querydsl-core:5.0.0'
+    testImplementation 'com.querydsl:querydsl-jpa:5.0.0'
+    testImplementation 'jakarta.persistence:jakarta.persistence-api:3.0.0'
+}
+
+def querydslDir = "src/main/generated"
+
+sourceSets {
+    main.java.srcDirs += [querydslDir]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.generatedSourceOutputDirectory = file(querydslDir)
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir()
+}
