@@ -109,7 +109,7 @@ public class BrandServiceHelper {
     }
 
     public void validateBrandUniquenessAndUpdateBrandDetails(Brand brand, UpdateBrandRequestDto updateBrandRequestDto) {
-        if (!brandRepository.existsByBrandkeyAndBrandName(brand.getBrandkey(), brand.getBrandName())) {
+        if (!brandRepository.existsByBrandKeyAndBrandName(brand.getBrandKey(), brand.getBrandName())) {
             throw new BrandException(BrandErrorCode.DUPLICATE_BRAND);
         }
         brand.updateBrand(
@@ -138,7 +138,7 @@ public class BrandServiceHelper {
      * @throws BrandException 브랜드 키와 이름의 조합이 이미 존재할 경우 발생 (BrandErrorCode.DUPLICATE_BRAND_KEY)
      */
     public Brand validateBrandUniquenessAndCreateBrand(CreateBrandRequestDto createBrandRequestDto) {
-        if (brandRepository.existsByBrandkeyAndBrandName(createBrandRequestDto.getBrandKey(), createBrandRequestDto.getBrandName())) {
+        if (brandRepository.existsByBrandKeyAndBrandName(createBrandRequestDto.getBrandKey(), createBrandRequestDto.getBrandName())) {
             throw new BrandException(BrandErrorCode.DUPLICATE_BRAND_KEY);
         }
 
@@ -160,7 +160,7 @@ public class BrandServiceHelper {
     public GetBrandResponseDto convertToDto(Brand brand) {
         return GetBrandResponseDto.builder()
                 .id(brand.getId())
-                .brandKey(brand.getBrandkey())
+                .brandKey(brand.getBrandKey())
                 .brandName(brand.getBrandName())
                 .remark(brand.getRemark())
                 .build();

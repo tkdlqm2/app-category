@@ -127,4 +127,9 @@ public class ProductServiceHelper {
             throw new ProductException(ProductErrorCode.NOT_FOUND_CATEGORYTYPE);
         }
     }
+
+    public List<Product> getProducts(Long brandId, CategoryType categoryType) {
+        return productRepository.getProducts(brandId, categoryType)
+                .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
+    }
 }

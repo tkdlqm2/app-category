@@ -12,4 +12,5 @@ public interface ProductRepositoryCustom {
     Optional<List<Product>> findCheapestProductsPerCategoryByBrandId(Long brandId);
     Optional<List<Product>> findMinPricedProductsByCategory(CategoryType categoryType);
     Optional<List<Product>> findMaxPricedProductsByCategory(CategoryType categoryType);
+    Optional<List<Product>> getProducts(Long brandId, CategoryType categoryType);
 }

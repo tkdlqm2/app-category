@@ -72,7 +72,7 @@ public class BrandServiceImpl implements IBrandService {
         Brand brand = brandServiceHelper.findBrandById(brandId);
         GetBrandResponseDto getBrandResponseDto = GetBrandResponseDto.builder()
                 .id(brand.getId())
-                .brandKey(brand.getBrandkey())
+                .brandKey(brand.getBrandKey())
                 .brandName(brand.getBrandName())
                 .remark(brand.getRemark())
                 .build();

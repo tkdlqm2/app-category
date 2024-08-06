@@ -1,9 +1,6 @@
 package com.category.brand.service;
 
-import com.category.brand.dto.request.CategoryPriceRangeRequestDto;
-import com.category.brand.dto.request.CreateProductRequestDto;
-import com.category.brand.dto.request.RemoveProductRequestDto;
-import com.category.brand.dto.request.UpdateProductRequestDto;
+import com.category.brand.dto.request.*;
 import com.category.brand.dto.response.*;
 
 public interface IProductService {
@@ -12,5 +9,6 @@ public interface IProductService {
     RemoveProductResponseDto removeProduct(RemoveProductRequestDto removeProductRequestDto);
     CategoryLowestPriceResponseDto getLowestPricedProductsByCategory();
     CategoryPriceRangeResponseDto getCategoryPriceRange(CategoryPriceRangeRequestDto category);
-
+    GetCategoryResponseDto getCategoryList();
+    GetProductByConditionResponseDto getProductByBrand(GetProductByConditionRequestDto getProductByBrandRequestDto);
 }

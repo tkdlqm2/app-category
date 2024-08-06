@@ -5,6 +5,7 @@ import com.category.database.entity.brand.QBrand;
 import com.category.database.entity.product.Product;
 import com.category.database.entity.product.QProduct;
 import com.category.database.repository.custom.ProductRepositoryCustom;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -19,10 +20,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QProduct product = QProduct.product;
     private final QBrand brand = QBrand.brand;
+    private final BooleanBuilder predicate;
 
     @Autowired
     public ProductRepositoryImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
+        this.predicate = new BooleanBuilder();
     }
 
     @Override
@@ -93,4 +96,27 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         return Optional.ofNullable(result.isEmpty() ? null : result);
     }
+
+    @Override
+    public Optional<List<Product>> getProducts(Long brandId, CategoryType categoryType) {
+        QProduct product = QProduct.product;
+        QBrand brand = QBrand.brand;
+
+        if (brandId != null && categoryType != null) {
+            predicate.and(product.brand.id.eq(brandId))
+                    .and(product.categoryType.eq(categoryType));
+        } else if (brandId != null) {
+            predicate.and(product.brand.id.eq(brandId));
+        } else if (categoryType != null) {
+            predicate.and(product.categoryType.eq(categoryType));
+        }
+
+        List<Product> result = queryFactory.selectFrom(product)
+                .join(product.brand, brand).fetchJoin()
+                .where(predicate)
+                .fetch();
+
+        return Optional.ofNullable(result.isEmpty() ? null : result);
+    }
+
 }

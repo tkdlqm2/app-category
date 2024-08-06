@@ -1,9 +1,6 @@
 package com.category.brand.controller;
 
-import com.category.brand.dto.request.CategoryPriceRangeRequestDto;
-import com.category.brand.dto.request.CreateProductRequestDto;
-import com.category.brand.dto.request.RemoveProductRequestDto;
-import com.category.brand.dto.request.UpdateProductRequestDto;
+import com.category.brand.dto.request.*;
 import com.category.brand.dto.response.*;
 import com.category.brand.service.IProductService;
 import com.category.common.dto.ResponseDTO;
@@ -14,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "product API", description = "상품 API")
 @RestController
@@ -28,6 +27,14 @@ public class ProductController {
         CreateProductResponseDto registerProductResponse = productService.createProduct(registerProductRequestDto);
         return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "상품 등록성공", registerProductResponse));
     }
+
+    @Operation(summary = "전체 카테고리 조회", description = "전체 카테고리 조회하는 API")
+    @GetMapping("/category/list")
+    public ResponseEntity<ResponseDTO<GetCategoryResponseDto>> getCategoryList() {
+        GetCategoryResponseDto getCategoryResponseDto = productService.getCategoryList();
+        return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "전체 카테고리 조회 성공", getCategoryResponseDto));
+    }
+
     @Operation(summary = "상품 수정", description = "상품을 수정하는 API.")
     @PutMapping("/update")
     public ResponseEntity<ResponseDTO<UpdateProductResponseDto>> updateBrand(@RequestBody @Valid UpdateProductRequestDto updateProductRequestDto) {
@@ -54,5 +61,11 @@ public class ProductController {
     public ResponseEntity<ResponseDTO<CategoryPriceRangeResponseDto>> getCategoryPriceRange(@RequestBody @Valid CategoryPriceRangeRequestDto categoryPriceRangeRequestDto) {
         CategoryPriceRangeResponseDto categoryPriceRangeResponse = productService.getCategoryPriceRange(categoryPriceRangeRequestDto);
         return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "카테고리 이름으로 최저, 최고 가격 브랜드와 상품 가격을 조회 호출 성공", categoryPriceRangeResponse));
+    }
+    @Operation(summary = "특정 조건의 상품 조회", description = "특정 조건의 상품을 조회하는 API")
+    @PostMapping("/list/specific")
+    public ResponseEntity<ResponseDTO<GetProductByConditionResponseDto>> getProductsByBrand(@RequestBody @Valid GetProductByConditionRequestDto getProductByConditionRequestDto) {
+        GetProductByConditionResponseDto getProductByConditionResponseDto = productService.getProductByBrand(getProductByConditionRequestDto);
+        return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "특정 브랜드의 상품을 조회 호출 성공", getProductByConditionResponseDto));
     }
 }

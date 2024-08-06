@@ -22,7 +22,7 @@ public class QBrand extends EntityPathBase<Brand> {
 
     public final com.category.database.entity.QBaseEntity _super = new com.category.database.entity.QBaseEntity(this);
 
-    public final StringPath brandkey = createString("brandkey");
+    public final StringPath brandKey = createString("brandKey");
 
     public final StringPath brandName = createString("brandName");
 
