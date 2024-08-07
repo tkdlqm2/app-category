@@ -35,10 +35,7 @@ public class ProductServiceHelper {
                 .orElseThrow(() -> new BrandException(BrandErrorCode.NOT_FOUND_BRAND_ID));
     }
 
-    public Product validateProductUniquenessAndCreateProduct(CreateProductRequestDto createProductRequestDto, Brand brand) {
-        if (productRepository.existsByBrandIdAndProductKey(createProductRequestDto.getBrandId(), createProductRequestDto.getProductKey())) {
-            throw new ProductException(ProductErrorCode.DUPLICATE_PRODUCT_KEY);
-        }
+    public Product createProduct(CreateProductRequestDto createProductRequestDto, Brand brand) {
         Product product = Product.builder()
                 .brand(brand)
                 .productKey(createProductRequestDto.getProductKey())

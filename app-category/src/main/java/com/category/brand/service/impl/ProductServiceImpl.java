@@ -25,7 +25,7 @@ public class ProductServiceImpl implements IProductService {
     @Transactional
     public CreateProductResponseDto createProduct(CreateProductRequestDto createProductRequestDto) {
         Brand brand = productServiceHelper.findBrandById(createProductRequestDto.getBrandId());
-        Product product = productServiceHelper.validateProductUniquenessAndCreateProduct(createProductRequestDto, brand);
+        Product product = productServiceHelper.createProduct(createProductRequestDto, brand);
         return CreateProductResponseDto.builder().productId(product.getId()).build();
     }
 
