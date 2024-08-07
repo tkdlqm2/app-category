@@ -10,8 +10,8 @@
 7. 액세사리
 
 ## 기술스택
-* 언어 : Java17
-* 프레임워크 : SpringBoot (v3.2.1), Spring Data JPA
+* 언어 : Java17(백엔드) , Node(v16)
+* 프레임워크 : SpringBoot (v3.2.1), Spring Data JPA, React
 * 데이터베이스 : H2
 
 ## 구현범위
@@ -82,3 +82,9 @@ curl  -X GET http://127.0.0.1:18083/api/v1/insert/brand
 상품 생성
 curl  -X GET http://127.0.0.1:18083/api/v1/insert/product
 ```
+
+## 테스트 방법
+1. 프론트 앤드
+   http://127.0.0.1:3000/
+2. swagger
+   http://127.0.0.1:18083/swagger-ui/index.html#/product%20API/getCategoryList
