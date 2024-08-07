@@ -4,7 +4,17 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.5' apply false
 }
 
+ext {
+	springBootVersion = '3.2.7'
+	javaVersion = '17'
+	lombokVersion = '1.18.30'  // Lombok 버전 명시 (예시)
+	springDocVersion = '2.1.0'
+}
+
 allprojects {
+	group = 'com.subride'
+	version = '0.0.1-SNAPSHOT'
+
 	repositories {
 		mavenCentral()
 	}
@@ -15,26 +25,22 @@ subprojects {
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 
-	group = 'com.subride'
-	version = '0.0.1-SNAPSHOT'
-
-	java {
-		sourceCompatibility = '17'
-	}
+	sourceCompatibility = javaVersion
+	targetCompatibility = javaVersion
 
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-actuator'
 		implementation 'org.springframework.boot:spring-boot-starter-web'
-		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+		implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+		compileOnly "org.projectlombok:lombok:${lombokVersion}"
+		annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 		testImplementation 'org.mockito:mockito-core'
 		testImplementation 'org.mockito:mockito-junit-jupiter'
 		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-		compileOnly 'org.projectlombok:lombok'
-		annotationProcessor 'org.projectlombok:lombok'
 	}
 
 	test {
@@ -53,8 +59,21 @@ project(':domain-database') {
 }
 
 project(':app-category') {
+	apply plugin: 'application'
+
 	dependencies {
 		implementation project(':domain-database')
 		implementation project(':common')
+	}
+
+	bootJar {
+		enabled = true
+		mainClass = 'com.category.brand.Application'
+	}
+
+	jar { enabled = false }
+
+	application {
+		mainClass = 'com.category.brand.Application'
 	}
 }
