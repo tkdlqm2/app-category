@@ -23,35 +23,35 @@ import java.util.List;
 @WebMvcTest(BrandController.class)
 @Import({BigDecimalSerializer.class})
 public class BrandControllerComponentTest {
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private BrandServiceImpl brandService;
-
-    @MockBean
-    private BrandRepository brandRepository;
-
-    @MockBean
-    private ProductRepository productRepository;
-
-    @BeforeEach
-    @Transactional
-    void setup() {
-        List<Brand> brandList = TestDataGenerator.generateBrand();
-        List<Product> productList = TestDataGenerator.generateProducts(brandList);
-        for(Brand brand : brandList) {
-            brandRepository.save(brand);
-        }
-        for(Product product : productList) {
-            productRepository.save(product);
-        }
-    }
-    @Test
-    void findLowestPriceForBrand() throws Exception {
-
-        // Given
-//        LowestPriceResponseDto
-
-    }
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @MockBean
+//    private BrandServiceImpl brandService;
+//
+//    @MockBean
+//    private BrandRepository brandRepository;
+//
+//    @MockBean
+//    private ProductRepository productRepository;
+//
+//    @BeforeEach
+//    @Transactional
+//    void setup() {
+//        List<Brand> brandList = TestDataGenerator.generateBrand();
+//        List<Product> productList = TestDataGenerator.generateProducts(brandList);
+//        for(Brand brand : brandList) {
+//            brandRepository.save(brand);
+//        }
+//        for(Product product : productList) {
+//            productRepository.save(product);
+//        }
+//    }
+//    @Test
+//    void findLowestPriceForBrand() throws Exception {
+//
+//        // Given
+////        LowestPriceResponseDto
+//
+//    }
 }

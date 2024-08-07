@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SubBrandCategoryPriceSummaryDto {
+public class BrandCategoryPriceSummaryDto {
     @JsonProperty("카테고리")
     private String categoryType;
     @JsonProperty("가격")
@@ -20,7 +20,7 @@ public class SubBrandCategoryPriceSummaryDto {
     private BigDecimal price;
 
     @Builder
-    public SubBrandCategoryPriceSummaryDto(String categoryType, BigDecimal price) {
+    public BrandCategoryPriceSummaryDto(String categoryType, BigDecimal price) {
         this.categoryType = categoryType;
         this.price = price;
     }

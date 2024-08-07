@@ -4,14 +4,11 @@ import com.category.brand.exception.brand.BrandException;
 import com.category.brand.exception.product.ProductException;
 import com.category.common.dto.ResponseDTO;
 import com.category.common.utils.CommonUtils;
-import jakarta.security.auth.message.AuthException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,13 +17,15 @@ import java.util.stream.Collectors;
 public class CustomExceptionHandler {
     @ExceptionHandler(BrandException.class)
     public ResponseEntity<ResponseDTO<Void>> handleBrandException(BrandException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonUtils.createFailureResponse(0, ex.getMessage()));
+        CommonErrorCodeType errorCode = ex.getCommonErrorCodeType();
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(CommonUtils.createFailureResponse(errorCode.getErrorCode(), ex.getMessage(), ex.getRequestBody()));
     }
     @ExceptionHandler(ProductException.class)
     public ResponseEntity<ResponseDTO<Void>>  handleBrandException(ProductException ex) {
+        CommonErrorCodeType errorCode = ex.getCommonErrorCodeType();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonUtils.createFailureResponse(0, ex.getMessage()));
+                .body(CommonUtils.createFailureResponse(errorCode.getErrorCode(), ex.getMessage(), ex.getRequestBody()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

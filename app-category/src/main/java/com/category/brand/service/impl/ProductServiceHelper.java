@@ -7,12 +7,13 @@ import com.category.brand.exception.brand.BrandException;
 import com.category.brand.exception.product.ProductErrorCode;
 import com.category.brand.exception.product.ProductException;
 import com.category.common.enums.CategoryType;
-import com.category.common.model.CategoryProduct;
-import com.category.common.model.SubCategoryPriceRange;
+import com.category.common.model.CategoryPriceRangeDetailResponseDto;
+import com.category.common.model.CategoryProductDetailDto;
 import com.category.database.entity.brand.Brand;
 import com.category.database.entity.product.Product;
 import com.category.database.repository.BrandRepository;
 import com.category.database.repository.ProductRepository;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +43,7 @@ public class ProductServiceHelper {
                 .brand(brand)
                 .productKey(createProductRequestDto.getProductKey())
                 .price(createProductRequestDto.getPrice())
-                .categoryType(createProductRequestDto.getCategoryType())
+                .categoryType(validateCategoryType(createProductRequestDto.getCategoryType()))
                 .build();
         return productRepository.save(product);
     }
@@ -63,8 +64,8 @@ public class ProductServiceHelper {
         productRepository.deleteById(productId);
     }
 
-    public CategoryProduct convertToCategoryProduct(Product product) {
-        return CategoryProduct.builder()
+    public CategoryProductDetailDto convertToCategoryProduct(Product product) {
+        return CategoryProductDetailDto.builder()
                 .price(product.getPrice())
                 .categoryType(product.getCategoryType())
                 .brandName(product.getBrand().getBrandName())
@@ -105,7 +106,7 @@ public class ProductServiceHelper {
      * @return 해당 카테고리의 최저가 또는 최고가 제품 정보를 담은 SubCategoryPriceRange 객체 리스트
      * @throws ProductException 해당 카테고리에 대한 제품을 찾을 수 없을 때 발생 (ProductErrorCode.NOT_FOUND_PRODUCT_CATEGORY)
      */
-    public List<SubCategoryPriceRange> getPricedProductsByCategory(CategoryType categoryType, boolean isMinPrice) {
+    public List<CategoryPriceRangeDetailResponseDto> getPricedProductsByCategory(CategoryType categoryType, boolean isMinPrice) {
         Optional<List<Product>> products = isMinPrice
                 ? productRepository.findMinPricedProductsByCategory(categoryType)
                 : productRepository.findMaxPricedProductsByCategory(categoryType);
@@ -113,7 +114,7 @@ public class ProductServiceHelper {
         return products
                 .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_CATEGORY))
                 .stream()
-                .map(product -> SubCategoryPriceRange.builder()
+                .map(product -> CategoryPriceRangeDetailResponseDto.builder()
                         .brandName(product.getBrand().getBrandName())
                         .price(product.getPrice())
                         .build())
@@ -128,8 +129,11 @@ public class ProductServiceHelper {
         }
     }
 
-    public List<Product> getProducts(Long brandId, CategoryType categoryType) {
-        return productRepository.getProducts(brandId, categoryType)
+    public List<Product> getProducts(Long brandId, String categoryType) {
+        if (brandId == null && StringUtils.isBlank(categoryType)) {
+            throw new ProductException(ProductErrorCode.NOT_FOUND_CONDITION);
+        }
+        return productRepository.getProducts(brandId, CategoryType.fromDescription(categoryType))
                 .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
     }
 }

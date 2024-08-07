@@ -20,12 +20,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QProduct product = QProduct.product;
     private final QBrand brand = QBrand.brand;
-    private final BooleanBuilder predicate;
 
     @Autowired
     public ProductRepositoryImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
-        this.predicate = new BooleanBuilder();
     }
 
     @Override
@@ -102,18 +100,20 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         QProduct product = QProduct.product;
         QBrand brand = QBrand.brand;
 
+        BooleanBuilder localPredicate = new BooleanBuilder();
+
         if (brandId != null && categoryType != null) {
-            predicate.and(product.brand.id.eq(brandId))
+            localPredicate.and(product.brand.id.eq(brandId))
                     .and(product.categoryType.eq(categoryType));
         } else if (brandId != null) {
-            predicate.and(product.brand.id.eq(brandId));
+            localPredicate.and(product.brand.id.eq(brandId));
         } else if (categoryType != null) {
-            predicate.and(product.categoryType.eq(categoryType));
+            localPredicate.and(product.categoryType.eq(categoryType));
         }
 
         List<Product> result = queryFactory.selectFrom(product)
                 .join(product.brand, brand).fetchJoin()
-                .where(predicate)
+                .where(localPredicate)
                 .fetch();
 
         return Optional.ofNullable(result.isEmpty() ? null : result);

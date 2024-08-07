@@ -1,13 +1,14 @@
 package com.category.brand.exception.product;
 
 import com.category.brand.exception.CommonErrorCodeType;
-import com.category.common.enums.CategoryType;
-import com.category.common.model.CategoryProduct;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class ProductException extends RuntimeException {
     private final CommonErrorCodeType commonErrorCodeType;
+    private Object requestBody;
 
     public ProductException(CommonErrorCodeType commonErrorCodeType) {
         super(commonErrorCodeType.getMessage());

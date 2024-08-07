@@ -4,8 +4,10 @@ import com.category.brand.dto.request.CreateBrandRequestDto;
 import com.category.brand.dto.request.RemoveBrandRequestDto;
 import com.category.brand.dto.request.UpdateBrandRequestDto;
 import com.category.brand.dto.response.*;
+import com.category.brand.exception.brand.BrandErrorCode;
+import com.category.brand.exception.brand.BrandException;
 import com.category.brand.service.IBrandService;
-import com.category.common.model.BrandCategoryPriceSummary;
+import com.category.common.model.LowestPriceDetailResponseDto;
 import com.category.database.entity.brand.Brand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,25 @@ public class BrandServiceImpl implements IBrandService {
                 .build();
     }
     @Override
+    @Transactional(readOnly = true)
+    public GetBrandResponseDto getBrand(Long brandId) {
+        Brand brand = brandServiceHelper.findBrandById(brandId);
+        GetBrandResponseDto getBrandResponseDto = GetBrandResponseDto.builder()
+                .id(brand.getId())
+                .brandKey(brand.getBrandKey())
+                .brandName(brand.getBrandName())
+                .remark(brand.getRemark())
+                .build();
+        return getBrandResponseDto;
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetBrandResponseDto> getBrandList() {
+        return brandServiceHelper.findAllBrand().stream()
+                .map(brandServiceHelper::convertToDto)
+                .collect(Collectors.toList());
+    }
+    @Override
     @Transactional
     public RemoveBrandResponseDto removeBrand(RemoveBrandRequestDto removeBrandRequestDto) {
         Long brandId = removeBrandRequestDto.getId();
@@ -46,36 +67,15 @@ public class BrandServiceImpl implements IBrandService {
     @Transactional(readOnly = true)
     public LowestPriceResponseDto findLowestPriceForBrand() {
         List<Brand> brandsWithAllCategories = brandServiceHelper.findBrandsWithAllCategories();
-        List<BrandCategoryPriceSummary> allResults = brandsWithAllCategories.stream()
+        List<LowestPriceDetailResponseDto> allResults = brandsWithAllCategories.stream()
                 .map(brandServiceHelper::createBrandCategoryPriceSummary)
                 .collect(Collectors.toList());
         BigDecimal lowestTotalPrice = allResults.stream()
-                .map(BrandCategoryPriceSummary::getTotalPrice)
+                .map(LowestPriceDetailResponseDto::getTotalPrice)
                 .min(BigDecimal::compareTo)
                 .orElse(BigDecimal.ZERO);
         return LowestPriceResponseDto.builder()
                 .brandCategoryPriceSummaryList(brandServiceHelper.filterBrandsByLowestPrice(allResults, lowestTotalPrice))
                 .build();
-    }
-
-    @Override
-    public List<GetBrandResponseDto> getBrandList() {
-        return brandServiceHelper.findAllBrand().stream()
-                .map(brandServiceHelper::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-
-
-    @Override
-    public GetBrandResponseDto getBrand(Long brandId) {
-        Brand brand = brandServiceHelper.findBrandById(brandId);
-        GetBrandResponseDto getBrandResponseDto = GetBrandResponseDto.builder()
-                .id(brand.getId())
-                .brandKey(brand.getBrandKey())
-                .brandName(brand.getBrandName())
-                .remark(brand.getRemark())
-                .build();
-        return getBrandResponseDto;
     }
 }

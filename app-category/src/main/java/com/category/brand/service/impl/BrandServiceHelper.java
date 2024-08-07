@@ -6,9 +6,10 @@ import com.category.brand.dto.response.GetBrandResponseDto;
 import com.category.brand.exception.brand.BrandErrorCode;
 import com.category.brand.exception.brand.BrandException;
 import com.category.brand.exception.product.ProductErrorCode;
+import com.category.brand.exception.product.ProductException;
 import com.category.common.enums.CategoryType;
-import com.category.common.model.BrandCategoryPriceSummary;
-import com.category.common.model.SubBrandCategoryPriceSummaryDto;
+import com.category.common.model.BrandCategoryPriceSummaryDto;
+import com.category.common.model.LowestPriceDetailResponseDto;
 import com.category.database.entity.brand.Brand;
 import com.category.database.entity.product.Product;
 import com.category.database.repository.BrandRepository;
@@ -65,18 +66,18 @@ public class BrandServiceHelper {
      * @return 생성된 BrandCategoryPriceSummary 객체
      * @throws BrandException 브랜드에 해당하는 제품이 없을 경우 발생 (ProductErrorCode.NOT_FOUND_PRODUCT_ID)
      */
-    public BrandCategoryPriceSummary createBrandCategoryPriceSummary(Brand brand) {
+    public LowestPriceDetailResponseDto createBrandCategoryPriceSummary(Brand brand) {
         List<Product> cheapestProducts = productRepository.findCheapestProductsPerCategoryByBrandId(brand.getId())
-                .orElseThrow(() -> new BrandException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
+                .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
         BigDecimal totalPrice = cheapestProducts.stream()
                 .map(Product::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<SubBrandCategoryPriceSummaryDto> subSummaries = cheapestProducts.stream()
-                .map(Product::toDomain)
+        List<BrandCategoryPriceSummaryDto> subSummaries = cheapestProducts.stream()
+                .map(Product::toDomainSubBrandCategoryPriceSummaryDto)
                 .collect(Collectors.toList());
 
-        return BrandCategoryPriceSummary.builder()
+        return LowestPriceDetailResponseDto.builder()
                 .subBrandCategoryPriceSummaryDtoList(subSummaries)
                 .totalPrice(totalPrice)
                 .brandName(brand.getBrandName())
@@ -97,7 +98,7 @@ public class BrandServiceHelper {
      * @param lowestPrice 필터링 기준이 되는 최저 가격
      * @return 총 가격이 주어진 최저 가격과 일치하는 BrandCategoryPriceSummary 객체들의 리스트
      */
-    public List<BrandCategoryPriceSummary> filterBrandsByLowestPrice(List<BrandCategoryPriceSummary> summaries, BigDecimal lowestPrice) {
+    public List<LowestPriceDetailResponseDto> filterBrandsByLowestPrice(List<LowestPriceDetailResponseDto> summaries, BigDecimal lowestPrice) {
         return summaries.stream()
                 .filter(summary -> summary.getTotalPrice().compareTo(lowestPrice) == 0)
                 .collect(Collectors.toList());

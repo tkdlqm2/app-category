@@ -15,10 +15,11 @@ public class CommonUtils {
                 .build();
     }
 
-    public static <T> ResponseDTO<T> createFailureResponse(int code, String message) {
-        return ResponseDTO.<T>builder()
+    public static ResponseDTO createFailureResponse(int code, String message, Object response) {
+        return ResponseDTO.builder()
                 .code(code)
                 .message(message)
+                .response(response)
                 .build();
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public class BrandCategoryPriceSummary {
+public class LowestPriceDetailResponseDto {
     @NotNull
     @JsonProperty("브랜드")
     private String brandName;
@@ -24,10 +24,10 @@ public class BrandCategoryPriceSummary {
 
     @NotNull
     @JsonProperty("카테고리")
-    private List<SubBrandCategoryPriceSummaryDto> category;
+    private List<BrandCategoryPriceSummaryDto> category;
 
     @Builder
-    public BrandCategoryPriceSummary(String brandName, List<SubBrandCategoryPriceSummaryDto> subBrandCategoryPriceSummaryDtoList, BigDecimal totalPrice) {
+    public LowestPriceDetailResponseDto(String brandName, List<BrandCategoryPriceSummaryDto> subBrandCategoryPriceSummaryDtoList, BigDecimal totalPrice) {
         this.brandName = brandName;
         this.category = subBrandCategoryPriceSummaryDtoList;
         this.totalPrice = totalPrice;

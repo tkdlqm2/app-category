@@ -2,9 +2,9 @@ package com.category.brand.exception;
 
 import org.springframework.http.HttpStatus;
 
-public interface CommonErrorCodeType {
+public interface CommonErrorCodeType<T> {
 
-    String getErrorCode();
+    int getErrorCode();
     String getMessage();
     HttpStatus getHttpStatus();
 }

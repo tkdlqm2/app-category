@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public class SubCategoryPriceRange {
+public class CategoryPriceRangeDetailResponseDto {
     @JsonProperty("브랜드")
     private String brandName;
     @JsonProperty("가격")
@@ -18,7 +18,7 @@ public class SubCategoryPriceRange {
     BigDecimal price;
 
     @Builder
-    public SubCategoryPriceRange(String brandName, BigDecimal price) {
+    public CategoryPriceRangeDetailResponseDto(String brandName, BigDecimal price) {
         this.brandName = brandName;
         this.price = price;
     }

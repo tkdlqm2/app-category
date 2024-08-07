@@ -8,10 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-
 public class CreateBrandRequestDto {
     @Schema(required = true, description = "브랜드 키", example = "B0001")
     @NotBlank(message = "BrandKey 값이 존재하지 않습니다.")

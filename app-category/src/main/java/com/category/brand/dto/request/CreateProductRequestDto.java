@@ -28,8 +28,8 @@ public class CreateProductRequestDto {
     @NotNull
     private Long brandId;
     @NotNull
-    @Schema(required = true, description = "카테고리 정보 - 상의, 하의, 모자, ...", example = "HAT")
-    private CategoryType categoryType;
+    @Schema(required = true, description = "카테고리 정보 - 상의, 하의, 모자, ...", example = "모자")
+    private String categoryType;
     @Schema(required = false, description = "비고", example = "")
     @JsonProperty("remark")
     @Size(max = 100)

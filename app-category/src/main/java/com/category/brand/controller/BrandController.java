@@ -4,6 +4,7 @@ import com.category.brand.dto.request.CreateBrandRequestDto;
 import com.category.brand.dto.request.RemoveBrandRequestDto;
 import com.category.brand.dto.request.UpdateBrandRequestDto;
 import com.category.brand.dto.response.*;
+import com.category.brand.exception.brand.BrandException;
 import com.category.brand.service.IBrandService;
 import com.category.common.dto.ResponseDTO;
 import com.category.common.utils.CommonUtils;
@@ -27,21 +28,36 @@ public class BrandController {
     @Operation(summary = "브랜드 등록", description = "브랜드를 생성하는 API")
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO<CreateBrandResponseDto>> createBrand(@RequestBody @Valid CreateBrandRequestDto createBrandRequestDto) {
-        CreateBrandResponseDto createBrandResponse = brandService.createBrand(createBrandRequestDto);
-        return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "브랜드 생성성공", createBrandResponse));
+        try {
+            CreateBrandResponseDto createBrandResponse = brandService.createBrand(createBrandRequestDto);
+            return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "브랜드 생성성공", createBrandResponse));
+        } catch(BrandException e) {
+            e.setRequestBody(createBrandRequestDto);
+            throw e;
+        }
     }
 
     @Operation(summary = "브랜드 수정", description = "브랜드를 수정하는 API.")
     @PutMapping("/update")
     public ResponseEntity<ResponseDTO<UpdateBrandResponseDto>> updateBrand(@RequestBody @Valid UpdateBrandRequestDto updateBrandRequestDto) {
-        UpdateBrandResponseDto updateBrandResponseDto = brandService.updateBrand(updateBrandRequestDto);
-        return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "브랜드 정보 수정성공", updateBrandResponseDto));
+        try {
+            UpdateBrandResponseDto updateBrandResponseDto = brandService.updateBrand(updateBrandRequestDto);
+            return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "브랜드 정보 수정성공", updateBrandResponseDto));
+        } catch(BrandException e) {
+            e.setRequestBody(updateBrandRequestDto);
+            throw e;
+        }
     }
     @Operation(summary = "브랜드 삭제", description = "브랜드를 삭제하는 API.")
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDTO<RemoveBrandResponseDto>> updateBrand(@RequestBody @Valid RemoveBrandRequestDto removeBrandRequestDto) {
-        RemoveBrandResponseDto removeBrandResponseDto = brandService.removeBrand(removeBrandRequestDto);
-        return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "브랜드  삭제성공", removeBrandResponseDto));
+        try {
+            RemoveBrandResponseDto removeBrandResponseDto = brandService.removeBrand(removeBrandRequestDto);
+            return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "브랜드  삭제성공", removeBrandResponseDto));
+        } catch(BrandException e) {
+            e.setRequestBody(removeBrandRequestDto);
+            throw e;
+        }
     }
 
     @Operation(summary = "제일 저렴한 카테고리 셋트를 제공하는 브랜드와 카테고리 상품 조회", description = "단일 브랜드로 모든 카테고리 상품을 구매할 때 최저가격에 판매하는 브랜드와 카테고리의 상품가격, 총액을 조회하는 API")
@@ -67,7 +83,12 @@ public class BrandController {
     @GetMapping("/brands/{brandId}")
     public ResponseEntity<ResponseDTO<GetBrandResponseDto>> getBrand(
             @PathVariable("brandId") @Parameter(description = "브랜드 ID") Long brandId) {
-        GetBrandResponseDto getBrandResponse = brandService.getBrand(brandId);
-        return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "단일 브랜드 조회 성공", getBrandResponse));
+        try {
+            GetBrandResponseDto getBrandResponse = brandService.getBrand(brandId);
+            return ResponseEntity.ok(CommonUtils.createSuccessResponse(200, "단일 브랜드 조회 성공", getBrandResponse));
+        } catch(BrandException e) {
+            e.setRequestBody(brandId);
+            throw e;
+        }
     }
 }

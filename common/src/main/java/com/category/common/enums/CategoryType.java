@@ -9,12 +9,12 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum CategoryType {
-    HAT("모자"),
     TOP("상의"),
     OUTERWEAR("아우터"),
-    SNEAKERS("신발"),
-    BAG("가방"),
     PANTS("바지"),
+    SNEAKERS("스니커즈"),
+    BAG("가방"),
+    HAT("모자"),
     SOCKS("양말"),
     ACCESSORY("악세사리")
     ;

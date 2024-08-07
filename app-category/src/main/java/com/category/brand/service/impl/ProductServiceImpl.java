@@ -2,21 +2,17 @@ package com.category.brand.service.impl;
 
 import com.category.brand.dto.request.*;
 import com.category.brand.dto.response.*;
-import com.category.brand.exception.product.ProductErrorCode;
-import com.category.brand.exception.product.ProductException;
 import com.category.common.enums.CategoryType;
-import com.category.common.model.CategoryProduct;
 import com.category.brand.service.IProductService;
-import com.category.common.model.SubBrandCategoryPriceSummaryDto;
+import com.category.common.model.CategoryProductDetailDto;
+import com.category.common.model.GetProductByConditionDetailResponseDto;
 import com.category.database.entity.brand.Brand;
 import com.category.database.entity.product.Product;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +51,7 @@ public class ProductServiceImpl implements IProductService {
         BigDecimal totalPrice = productList.stream()
                 .map(Product::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        List<CategoryProduct> categoryProductList = productList.stream()
+        List<CategoryProductDetailDto> categoryProductList = productList.stream()
                 .map(productServiceHelper::convertToCategoryProduct)
                 .collect(Collectors.toList());
         return CategoryLowestPriceResponseDto.builder()
@@ -68,7 +64,6 @@ public class ProductServiceImpl implements IProductService {
     @Transactional(readOnly = true)
     public CategoryPriceRangeResponseDto getCategoryPriceRange(CategoryPriceRangeRequestDto category) {
         CategoryType categoryType = productServiceHelper.validateCategoryType(category.getCategoryType());
-
         return CategoryPriceRangeResponseDto.builder()
                 .categoryType(categoryType)
                 .cheapestPrice(productServiceHelper.getPricedProductsByCategory(categoryType, true))
@@ -77,6 +72,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetCategoryResponseDto getCategoryList() {
         List<CategoryType> categoryTypeList = Arrays.asList(CategoryType.values());
         List<String> categoryDescriptions = categoryTypeList.stream()
@@ -89,16 +85,14 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetProductByConditionResponseDto getProductByBrand(GetProductByConditionRequestDto getProductByBrandRequestDto) {
-        if (getProductByBrandRequestDto.getBrandId() == null && StringUtils.isBlank(getProductByBrandRequestDto.getCategory())) {
-            throw new ProductException(ProductErrorCode.NOT_FOUND_CONDITION);
-        }
-        List<Product> productList = productServiceHelper.getProducts(getProductByBrandRequestDto.getBrandId(), CategoryType.fromDescription(getProductByBrandRequestDto.getCategory()));
-        List<SubBrandCategoryPriceSummaryDto> subBrandCategoryPriceSummaryDtoList = productList.stream()
-                .map(Product::toDomain)
+        List<Product> productList = productServiceHelper.getProducts(getProductByBrandRequestDto.getBrandId(), getProductByBrandRequestDto.getCategory());
+        List<GetProductByConditionDetailResponseDto> categoryProducts = productList.stream()
+                .map(Product::toDomainCategoryProduct)
                 .collect(Collectors.toList());
         return GetProductByConditionResponseDto.builder()
-                .productList(subBrandCategoryPriceSummaryDtoList)
+                .productList(categoryProducts)
                 .build();
     }
 }

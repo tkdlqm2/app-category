@@ -1,9 +1,8 @@
 package com.category.database.entity.product;
 
 import com.category.common.enums.CategoryType;
-import com.category.common.enums.SaleStateCode;
-import com.category.common.model.CategoryProduct;
-import com.category.common.model.SubBrandCategoryPriceSummaryDto;
+import com.category.common.model.BrandCategoryPriceSummaryDto;
+import com.category.common.model.GetProductByConditionDetailResponseDto;
 import com.category.database.entity.BaseEntity;
 import com.category.database.entity.brand.Brand;
 import jakarta.persistence.*;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class Product extends BaseEntity {
     @Id
     @Comment("상품Id")
@@ -44,10 +44,44 @@ public class Product extends BaseEntity {
     @Column(length = 200)
     private String remark;
 
-    public SubBrandCategoryPriceSummaryDto toDomain() {
-        return SubBrandCategoryPriceSummaryDto.builder()
+    @Builder
+    public Product(BigDecimal price, Brand brand, String productKey, CategoryType categoryType, String remark) {
+        validateFields(price, brand, productKey, categoryType);
+        this.price = price;
+        this.brand = brand;
+        this.productKey = productKey;
+        this.categoryType = categoryType;
+        this.remark = remark;
+    }
+
+    private void validateFields(BigDecimal price, Brand brand, String productKey, CategoryType categoryType) {
+        if (price == null || price.signum() < 0) {
+            throw new IllegalArgumentException("Price must be non-negative");
+        }
+        if (brand == null) {
+            throw new IllegalArgumentException("Brand cannot be null");
+        }
+        if (productKey == null || productKey.trim().isEmpty()) {
+            throw new IllegalArgumentException("ProductKey cannot be null or empty");
+        }
+        if (categoryType == null) {
+            throw new IllegalArgumentException("CategoryType cannot be null");
+        }
+    }
+
+    public BrandCategoryPriceSummaryDto toDomainSubBrandCategoryPriceSummaryDto() {
+        return BrandCategoryPriceSummaryDto.builder()
                 .price(price)
                 .categoryType(categoryType.getDescription())
+                .build();
+    }
+
+    public GetProductByConditionDetailResponseDto toDomainCategoryProduct() {
+        return GetProductByConditionDetailResponseDto.builder()
+                .id(id)
+                .brandName(brand.getBrandName())
+                .categoryType(categoryType)
+                .price(price)
                 .build();
     }
 
@@ -63,14 +97,5 @@ public class Product extends BaseEntity {
         if (newRemark != null) {
             this.remark = newRemark.trim();
         }
-    }
-
-    @Builder
-    public Product(BigDecimal price, Brand brand, String productKey, CategoryType categoryType, String remark) {
-        this.price = price;
-        this.brand = brand;
-        this.productKey = productKey;
-        this.categoryType = categoryType;
-        this.remark = remark;
     }
 }

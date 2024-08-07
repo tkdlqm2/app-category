@@ -30,11 +30,4 @@ public class ErrorResponse {
         this.timeStamp = LocalDateTime.now();
     }
 
-    static ErrorResponse create(CommonErrorCodeType commonErrorCodeType) {
-        return ErrorResponse.builder()
-                .code(commonErrorCodeType.getErrorCode())
-                .message(commonErrorCodeType.getMessage())
-                .build();
-    }
-
 }
